@@ -379,8 +379,8 @@ public:
       else if ( var_G == var_Max ) H = ( 1.0f / 3.0f ) + del_R - del_B;
       else if ( var_B == var_Max ) H = ( 2.0f / 3.0f ) + del_G - del_R;
 
-      if ( H < 0 ) ; H += 1;
-      if ( H > 1 ) ; H -= 1;
+      //if ( H < 0 ){}; H += 1;
+      //if ( H > 1 ){}; H -= 1;
     }
     result->h = H;
     result->s = S;
@@ -609,7 +609,7 @@ class vsx_rand {
 public:
   VSX_MATH_3D_DLLIMPORT vsx_rand();
   VSX_MATH_3D_DLLIMPORT ~vsx_rand();
-  VSX_MATH_3D_DLLIMPORT float srand(uint32_t seed);
+  VSX_MATH_3D_DLLIMPORT void srand(uint32_t seed);
   VSX_MATH_3D_DLLIMPORT uint32_t rand();
   VSX_MATH_3D_DLLIMPORT float frand();
 

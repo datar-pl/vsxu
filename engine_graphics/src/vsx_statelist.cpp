@@ -178,8 +178,11 @@ void vsx_statelist::stop()
     (*it).engine->stop();
     (*it).need_reload = true;
   }
-  vxe->unload_state();
-  vxe->stop();
+  if (vxe)
+  {
+    vxe->unload_state();
+    vxe->stop();
+  }
 }
 
 vsx_string vsx_statelist::get_meta_visual_filename()
@@ -224,6 +227,7 @@ vsx_string vsx_statelist::get_meta_visual_company()
 }*/
 
 void vsx_statelist::random_state() {
+  if (0 == statelist.size()) return;
   if ((*state_iter).engine != vxe) return;
   int steps = rand() % statelist.size();
   while (steps) {
@@ -265,14 +269,15 @@ void vsx_statelist::render()
       faders.push_back(lvxe);
       fade_id = 0;
     }
+    transitioning = false;
+    render_first = false;
+    if ( state_iter == statelist.end() ) return;
     init_current((*state_iter).engine, &(*state_iter));
     vxe = (*state_iter).engine;
     cmd_in = &(*state_iter).cmd_in;
     cmd_out = &(*state_iter).cmd_out;
-    transitioning = false;
-
-    render_first = false;
   }
+  if ( !statelist.size() ) return;
 
   //printf("r2");
   if ((*state_iter).engine != vxe) // change is on the way
@@ -571,6 +576,13 @@ void vsx_statelist::init(vsx_string base_path,vsx_string init_sound_type)
     statelist.push_back(state);
   }
   state_iter = statelist.begin();
+  int steps = rand() % statelist.size();
+  while (steps) {
+    ++state_iter;
+    if (state_iter == statelist.end()) state_iter = statelist.begin();
+    --steps;
+  }
+
   load_fx_levels_from_user();
 }
 
@@ -587,7 +599,7 @@ vsx_statelist::~vsx_statelist()
   for (size_t i = 0; i < faders.size(); i++)
   {
     #ifdef VSXU_DEBUG
-    printf("deleting fader %d\n", i);
+    printf("deleting fader %lu\n", i);
     #endif
     delete faders[i];
   }
